@@ -1,16 +1,25 @@
-$form_div.on("click", ".insert", function() {
-            validate_form(function() {
-                var typ          = $("#typ").val(),
-                    bezeichnung  = $("#bezeichnung").val(),
-                    beschreibung = $("#beschreibung").val(),
-                    preis        = $("#preis").val();
-                add_container({
-                    "typ":typ,
-                    "bezeichnung": bezeichnung,
-                    "beschreibung":beschreibung,
-                    "preis":preis
-                });
-                $form_div.slideUp();
-                clear_form();
+$('body').on('change', '#dropzone', function() {
+            // Post-Daten vorbereiten
+            var data = new FormData();
+            for (var i = 0; i < this.files.length; i++) {
+                data.append('file'+i, this.files[i]);
+            };
+            data.append('funktion', 'upload_file');
+            data.append('json', 'true');
+            // Ajax-Call
+            $.ajax({
+                url: '/modules/kaufcontainer/kaufcontainer.php',
+                data: data,
+                type: 'POST',
+                processData: false,
+                contentType: false,
+                success: function(result) {
+                    console.log(result);
+                    if(result.success) {
+                        display_picture(result.data);
+                    } else {
+                        console.log(result.error);
+                    }
+                }
             });
         });
